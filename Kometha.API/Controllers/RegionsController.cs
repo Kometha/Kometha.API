@@ -131,5 +131,35 @@ namespace Kometha.API.Controllers
 
             return Ok();
         }
+
+        //Delete Region
+        //DELETE: https:localhost:portnumber/api/regions/{id}
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        public IActionResult Delete([FromRoute] Guid id) 
+        {
+            var regionDomain = dbContext.Regions.FirstOrDefault(x => x.Id == id);
+
+            if (regionDomain == null)
+            {
+                return NotFound();   
+            }
+
+            //Delete Region
+            dbContext.Regions.Remove(regionDomain);
+            dbContext.SaveChanges();
+
+            //return delete Region back
+            //map Domain Model to DTO
+            var regionDto = new RegionDTO
+            {
+                Id = regionDomain.Id,
+                Code = regionDomain.Code,
+                Name = regionDomain.Name,
+                RegionImageUrl = regionDomain.RegionImageUrl
+            };
+
+            return Ok(regionDto);
+        }
     }
 }
