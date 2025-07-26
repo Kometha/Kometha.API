@@ -3,6 +3,7 @@ using Kometha.API.Models.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Kometha.API.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
+using Kometha.API.Repositories;
 
 namespace Kometha.API.Controllers
 {
@@ -12,9 +13,12 @@ namespace Kometha.API.Controllers
     public class RegionsController : ControllerBase
     {
         private readonly KomethaDBContext dbContext;
-        public RegionsController(KomethaDBContext dbContext)
+        private readonly IRegionRepository regionRepository;
+
+        public RegionsController(KomethaDBContext dbContext, IRegionRepository regionRepository)
         {
             this.dbContext = dbContext;
+            this.regionRepository = regionRepository;
         }
 
         //GET ALL REGIONS
@@ -23,7 +27,7 @@ namespace Kometha.API.Controllers
         public async Task<IActionResult> GetAllRegions()
         {
             // Get Data from database - Domain models
-            var regionsDomain = await dbContext.Regions.ToListAsync();
+            var regionsDomain = await regionRepository.GetAllAsync();
 
             //Map Domain Models to DTOs
             var regionsDto = new List<RegionDTO>();
