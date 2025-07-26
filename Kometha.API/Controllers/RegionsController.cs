@@ -2,6 +2,7 @@
 using Kometha.API.Models.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Kometha.API.Models.DTOs;
+using Microsoft.EntityFrameworkCore;
 
 namespace Kometha.API.Controllers
 {
@@ -19,10 +20,10 @@ namespace Kometha.API.Controllers
         //GET ALL REGIONS
         //GET: https:localhost:portnumber/api/regions
         [HttpGet]
-        public IActionResult GetAllRegions()
+        public async Task<IActionResult> GetAllRegions()
         {
-
-            var regionsDomain = dbContext.Regions.ToList();
+            // Get Data from database - Domain models
+            var regionsDomain = await dbContext.Regions.ToListAsync();
 
             //Map Domain Models to DTOs
             var regionsDto = new List<RegionDTO>();
@@ -45,10 +46,10 @@ namespace Kometha.API.Controllers
         //GET: https:localhost:portnumber/api/regions/{id}
         [HttpGet]
         [Route("{id:Guid}")]
-        public IActionResult GetRegionById([FromRoute]Guid id)
+        public async Task<IActionResult> GetRegionById([FromRoute]Guid id)
         {
 
-            var regionDomain = dbContext.Regions.Find(id);
+            var regionDomain = await dbContext.Regions.FindAsync(id);
 
             //var region = dbContext.Regions.FirstOrDefault(x => x.Id == id);
 
@@ -65,14 +66,14 @@ namespace Kometha.API.Controllers
                 Name = regionDomain.Name,
                 RegionImageUrl = regionDomain.RegionImageUrl
             };
-
+            
             return Ok(regionDto);
         }
 
         //POST To Create New Region
         //POST: https://localhost:portnumber/api/regions
         [HttpPost]
-        public IActionResult Create([FromBody] AddRegionRequestDto addRegionRequestDto)
+        public async Task<IActionResult> Create([FromBody] AddRegionRequestDto addRegionRequestDto)
         {
             //Map or Convert DTO to Domain Model
             var regionDomainModel = new Region
@@ -83,8 +84,8 @@ namespace Kometha.API.Controllers
             };
 
             //Use Domain Modal to create Region
-            dbContext.Regions.Add(regionDomainModel);
-            dbContext.SaveChanges();
+            await dbContext.Regions.AddAsync(regionDomainModel);
+            await dbContext.SaveChangesAsync();
 
             //Map Domain model back to DTO
             var regionDto = new RegionDTO
@@ -104,9 +105,9 @@ namespace Kometha.API.Controllers
         //PUT: https:localhost:portnumber/api/regions/{id}
         [HttpPut]
         [Route("{id:Guid}")]
-        public IActionResult Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDTO updateRegionRequestDTO)
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDTO updateRegionRequestDTO)
         {
-            var regionDomainModel = dbContext.Regions.FirstOrDefault(x => x.Id == id);
+            var regionDomainModel = await dbContext.Regions.FindAsync(id);
 
             if (regionDomainModel == null)
             {
@@ -118,7 +119,9 @@ namespace Kometha.API.Controllers
             regionDomainModel.Name = updateRegionRequestDTO.Name;
             regionDomainModel.RegionImageUrl = updateRegionRequestDTO.RegionImageUrl;
 
-            dbContext.SaveChanges();
+            Console.WriteLine("Code: {0}", regionDomainModel.Code);
+
+            await dbContext.SaveChangesAsync();
 
             //Convert Domain Model to DTO
             var regionDto = new RegionDTO
@@ -136,9 +139,10 @@ namespace Kometha.API.Controllers
         //DELETE: https:localhost:portnumber/api/regions/{id}
         [HttpDelete]
         [Route("{id:Guid}")]
-        public IActionResult Delete([FromRoute] Guid id) 
+        public async Task<IActionResult> Delete([FromRoute] Guid id) 
         {
-            var regionDomain = dbContext.Regions.FirstOrDefault(x => x.Id == id);
+            var regionDomain = await dbContext.Regions.FindAsync(id);
+            //var regionDomain = dbContext.Regions.FirstOrDefault(x => x.Id == id);
 
             if (regionDomain == null)
             {
@@ -147,7 +151,7 @@ namespace Kometha.API.Controllers
 
             //Delete Region
             dbContext.Regions.Remove(regionDomain);
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
 
             //return delete Region back
             //map Domain Model to DTO
