@@ -1,4 +1,5 @@
 using Kometha.API.Dataa;
+using Kometha.API.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<KomethaDBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("KomethaConnectionString")));
+
+builder.Services.AddScoped<IRegionRepository, SQLRegionRepository>();
 
 var app = builder.Build();
 
