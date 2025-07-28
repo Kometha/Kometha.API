@@ -1,9 +1,8 @@
 ﻿using Kometha.API.Dataa;
 using Kometha.API.Models.Domain;
-using Microsoft.AspNetCore.Mvc;
 using Kometha.API.Models.DTOs;
-using Microsoft.EntityFrameworkCore;
 using Kometha.API.Repositories;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Kometha.API.Controllers
 {
@@ -34,12 +33,12 @@ namespace Kometha.API.Controllers
             foreach (var regionDomain in regionsDomain)
             {
                 regionsDto.Add(new RegionDTO()
-                    {
-                     Id = regionDomain.Id,
-                     Code = regionDomain.Code,
-                     Name = regionDomain.Name,
-                     RegionImageUrl = regionDomain.RegionImageUrl
-                    });
+                {
+                    Id = regionDomain.Id,
+                    Code = regionDomain.Code,
+                    Name = regionDomain.Name,
+                    RegionImageUrl = regionDomain.RegionImageUrl
+                });
             }
 
             //Return DTOs
@@ -50,10 +49,10 @@ namespace Kometha.API.Controllers
         //GET: https:localhost:portnumber/api/regions/{id}
         [HttpGet]
         [Route("{id:Guid}")]
-        public async Task<IActionResult> GetRegionById([FromRoute]Guid id)
+        public async Task<IActionResult> GetRegionById([FromRoute] Guid id)
         {
 
-            var regionDomain = await dbContext.Regions.FindAsync(id);
+            var regionDomain = await regionRepository.GetByIdAsync(id);
 
             //var region = dbContext.Regions.FirstOrDefault(x => x.Id == id);
 
@@ -70,7 +69,7 @@ namespace Kometha.API.Controllers
                 Name = regionDomain.Name,
                 RegionImageUrl = regionDomain.RegionImageUrl
             };
-            
+
             return Ok(regionDto);
         }
 
@@ -88,8 +87,7 @@ namespace Kometha.API.Controllers
             };
 
             //Use Domain Modal to create Region
-            await dbContext.Regions.AddAsync(regionDomainModel);
-            await dbContext.SaveChangesAsync();
+            regionDomainModel = await regionRepository.CreateAsync(regionDomainModel);
 
             //Map Domain model back to DTO
             var regionDto = new RegionDTO
@@ -111,7 +109,16 @@ namespace Kometha.API.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDTO updateRegionRequestDTO)
         {
-            var regionDomainModel = await dbContext.Regions.FindAsync(id);
+
+            //Map DTO to Domain Model
+            var regionDomainModel = new Region
+            {
+                Code = updateRegionRequestDTO.Code,
+                Name = updateRegionRequestDTO.Name,
+                RegionImageUrl = updateRegionRequestDTO.RegionImageUrl
+            };
+
+            regionDomainModel = await regionRepository.UpdateAsync(id, regionDomainModel);
 
             if (regionDomainModel == null)
             {
@@ -136,26 +143,21 @@ namespace Kometha.API.Controllers
                 RegionImageUrl = regionDomainModel.RegionImageUrl
             };
 
-            return Ok();
+            return Ok(regionDto);
         }
 
         //Delete Region
         //DELETE: https:localhost:portnumber/api/regions/{id}
         [HttpDelete]
         [Route("{id:Guid}")]
-        public async Task<IActionResult> Delete([FromRoute] Guid id) 
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
-            var regionDomain = await dbContext.Regions.FindAsync(id);
-            //var regionDomain = dbContext.Regions.FirstOrDefault(x => x.Id == id);
+            var regionDomain = await regionRepository.DeleteAsync(id);
 
             if (regionDomain == null)
             {
-                return NotFound();   
-            }
-
-            //Delete Region
-            dbContext.Regions.Remove(regionDomain);
-            await dbContext.SaveChangesAsync();
+                return NotFound();
+            }            
 
             //return delete Region back
             //map Domain Model to DTO
