@@ -1,6 +1,6 @@
 ﻿namespace Kometha.API.Models.DTOs
 {
-    public class AddRegionRequestDto
+    public class AddRegionRequestDTO
     {
         public string Code { get; set; }
         public string Name { get; set; }

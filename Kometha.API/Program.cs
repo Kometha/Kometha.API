@@ -1,6 +1,8 @@
 using Kometha.API.Dataa;
+using Kometha.API.Mappings;
 using Kometha.API.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +17,7 @@ builder.Services.AddDbContext<KomethaDBContext>(options => options.UseSqlServer(
 
 builder.Services.AddScoped<IRegionRepository, SQLRegionRepository>();
 
+builder.Services.AddAutoMapper(cfg => { }, typeof(AutoMapperProfiles));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
