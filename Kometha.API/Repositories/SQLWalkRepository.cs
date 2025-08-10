@@ -23,7 +23,7 @@ namespace Kometha.API.Repositories
         }
         public async Task<List<Walk>> GetAllAsync()
         {
-            return await dBContext.Walks.ToListAsync();
+            return await dBContext.Walks.Include("Difficulty").Include("Region").ToListAsync();
         }
 
         public async Task<Walk?> GetByIdAsync(Guid id)
