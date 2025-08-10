@@ -8,10 +8,14 @@ namespace Kometha.API.Mappings
     {
         public AutoMapperProfiles()
         {
+            // Regions
             CreateMap<Region, RegionDTO>().ReverseMap();
-
             CreateMap<AddRegionRequestDTO, Region>().ReverseMap();
             CreateMap<UpdateRegionRequestDTO ,Region>().ReverseMap();
+            // Walks
+            CreateMap<Walk, WalkDTO>().ReverseMap();
+            CreateMap<AddWalkRequestDTO, Walk>().ReverseMap();
+            
         }
     }
 
