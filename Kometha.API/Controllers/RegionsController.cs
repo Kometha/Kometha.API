@@ -65,16 +65,23 @@ namespace Kometha.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] AddRegionRequestDTO addRegionRequestDto)
         {
-            //Map or Convert DTO to Domain Model
-            var regionDomainModel = mapper.Map<Region>(addRegionRequestDto);
+            if (ModelState.IsValid)
+            {
+                //Map or Convert DTO to Domain Model
+                var regionDomainModel = mapper.Map<Region>(addRegionRequestDto);
 
-            //Use Domain Modal to create Region
-            regionDomainModel = await regionRepository.CreateAsync(regionDomainModel);
+                //Use Domain Modal to create Region
+                regionDomainModel = await regionRepository.CreateAsync(regionDomainModel);
 
-            //Map Domain model back to DTO
-            var regionDto = mapper.Map<RegionDTO>(regionDomainModel);
+                //Map Domain model back to DTO
+                var regionDto = mapper.Map<RegionDTO>(regionDomainModel);
 
-            return CreatedAtAction(nameof(GetRegionById), new { id = regionDomainModel.Id }, regionDto);         
+                return CreatedAtAction(nameof(GetRegionById), new { id = regionDomainModel.Id }, regionDto);
+            }
+            else
+            {
+                return BadRequest();
+            }      
         }
 
         //Update Region
