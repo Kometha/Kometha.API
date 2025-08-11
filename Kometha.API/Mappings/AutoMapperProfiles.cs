@@ -15,6 +15,7 @@ namespace Kometha.API.Mappings
             //? Walks
             CreateMap<Walk, WalkDTO>().ReverseMap();
             CreateMap<AddWalkRequestDTO, Walk>().ReverseMap();
+            CreateMap<UpdateWalkRequestDTO, Walk>().ReverseMap();
 
             //? Difficulty
             CreateMap<DifficultyDTO, Difficulty>().ReverseMap();

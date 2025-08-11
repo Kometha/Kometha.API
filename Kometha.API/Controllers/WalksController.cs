@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using Kometha.API.Dataa;
 using Kometha.API.Models.Domain;
 using Kometha.API.Models.DTOs;
 using Kometha.API.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Kometha.API.Controllers
 {
@@ -11,11 +13,13 @@ namespace Kometha.API.Controllers
     [ApiController]
     public class WalksController : ControllerBase
     {
+        private readonly KomethaDBContext dbContext;
         private readonly IMapper mapper;
         private readonly IWalkRepository walkRepository;
 
-        public WalksController(IMapper mapper, IWalkRepository walkRepository)
+        public WalksController(KomethaDBContext dbContext, IMapper mapper, IWalkRepository walkRepository)
         {
+            this.dbContext = dbContext;
             this.mapper = mapper;
             this.walkRepository = walkRepository;            
         }
@@ -63,6 +67,60 @@ namespace Kometha.API.Controllers
             var walkDto = mapper.Map<WalkDTO>(walkDomainModel);
 
             return Ok(walkDto);
+        }
+        //Update Walk
+        //PUT: https:localhost:portnumber/api/walks/{id}
+        [HttpPut]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateWalkRequestDTO updateWalkRequestDTO)
+        {
+
+            //Map DTO to Domain Model
+            var walkDomainModel = mapper.Map<Walk>(updateWalkRequestDTO);
+
+            walkDomainModel = await walkRepository.UpdateAsync(id, walkDomainModel);
+
+            if (walkDomainModel == null)
+            {
+                return NotFound();
+            }
+
+            ////Map DTO to Domain Model
+            //walkDomainModel.Name = updateWalkRequestDTO.Name;
+            //walkDomainModel.Description = updateWalkRequestDTO.Description;            
+            //walkDomainModel.LengthInKm = updateWalkRequestDTO.LengthInKm;
+            //walkDomainModel.WalkImageUrl = updateWalkRequestDTO.WalkImageUrl;
+            //walkDomainModel.DifficultyId = updateWalkRequestDTO.DifficultyId;
+            //walkDomainModel.RegionId = updateWalkRequestDTO.RegionId;
+
+            //Console.WriteLine("Name: {0}", walkDomainModel.Name);
+
+            //await dbContext.SaveChangesAsync();
+
+            //Convert Domain Model to DTO
+            var walkDto = mapper.Map<WalkDTO>(walkDomainModel);
+
+            return Ok(walkDto);
+        }
+
+        //Delete Region
+        //DELETE: https:localhost:portnumber/api/walks/{id}
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        {
+            var walkDomainModel = await walkRepository.DeleteAsync(id);
+
+            if (walkDomainModel == null)
+            {
+                return NotFound();
+            }
+
+            //return delete Walk back
+            //map Domain Model to DTO
+            var WalkDTO = mapper.Map<WalkDTO>(walkDomainModel);
+
+            return Ok(WalkDTO);
         }
     }
 }
