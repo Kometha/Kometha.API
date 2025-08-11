@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Kometha.API.CustomActionFilters;
 using Kometha.API.Dataa;
 using Kometha.API.Models.Domain;
 using Kometha.API.Models.DTOs;
@@ -25,14 +26,15 @@ namespace Kometha.API.Controllers
         }
 
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> Create([FromBody] AddWalkRequestDTO addWalkRequestDTO)
         {
-            var walkDomainModel = mapper.Map<Walk>(addWalkRequestDTO);
+                var walkDomainModel = mapper.Map<Walk>(addWalkRequestDTO);
 
-            await walkRepository.CreateAsync(walkDomainModel);
+                await walkRepository.CreateAsync(walkDomainModel);
 
-            // Map Domain model to DTO
-            return Ok(mapper.Map<WalkDTO>(walkDomainModel));
+                // Map Domain model to DTO
+                return Ok(mapper.Map<WalkDTO>(walkDomainModel));
         }
 
         //GET ALL WALKS
@@ -71,24 +73,24 @@ namespace Kometha.API.Controllers
         //Update Walk
         //PUT: https:localhost:portnumber/api/walks/{id}
         [HttpPut]
+        [ValidateModel]
         [Route("{id:Guid}")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateWalkRequestDTO updateWalkRequestDTO)
         {
+                //Map DTO to Domain Model
+                var walkDomainModel = mapper.Map<Walk>(updateWalkRequestDTO);
 
-            //Map DTO to Domain Model
-            var walkDomainModel = mapper.Map<Walk>(updateWalkRequestDTO);
+                walkDomainModel = await walkRepository.UpdateAsync(id, walkDomainModel);
 
-            walkDomainModel = await walkRepository.UpdateAsync(id, walkDomainModel);
+                if (walkDomainModel == null)
+                {
+                    return NotFound();
+                }
 
-            if (walkDomainModel == null)
-            {
-                return NotFound();
-            }
+                //Convert Domain Model to DTO
+                var walkDto = mapper.Map<WalkDTO>(walkDomainModel);
 
-            //Convert Domain Model to DTO
-            var walkDto = mapper.Map<WalkDTO>(walkDomainModel);
-
-            return Ok(walkDto);
+                return Ok(walkDto);                
         }
 
         //Delete Walk by ID

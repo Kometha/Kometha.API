@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Kometha.API.CustomActionFilters;
 using Kometha.API.Dataa;
 using Kometha.API.Models.Domain;
 using Kometha.API.Models.DTOs;
@@ -63,10 +64,9 @@ namespace Kometha.API.Controllers
         //POST To Create New Region
         //POST: https://localhost:portnumber/api/regions
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> Create([FromBody] AddRegionRequestDTO addRegionRequestDto)
         {
-            if (ModelState.IsValid)
-            {
                 //Map or Convert DTO to Domain Model
                 var regionDomainModel = mapper.Map<Region>(addRegionRequestDto);
 
@@ -76,44 +76,30 @@ namespace Kometha.API.Controllers
                 //Map Domain model back to DTO
                 var regionDto = mapper.Map<RegionDTO>(regionDomainModel);
 
-                return CreatedAtAction(nameof(GetRegionById), new { id = regionDomainModel.Id }, regionDto);
-            }
-            else
-            {
-                return BadRequest();
-            }      
+                return CreatedAtAction(nameof(GetRegionById), new { id = regionDomainModel.Id }, regionDto);            
         }
 
         //Update Region
         //PUT: https:localhost:portnumber/api/regions/{id}
         [HttpPut]
+        [ValidateModel]
         [Route("{id:Guid}")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDTO updateRegionRequestDTO)
         {
+                //Map DTO to Domain Model
+                var regionDomainModel = mapper.Map<Region>(updateRegionRequestDTO);
 
-            //Map DTO to Domain Model
-            var regionDomainModel = mapper.Map<Region>(updateRegionRequestDTO);
+                regionDomainModel = await regionRepository.UpdateAsync(id, regionDomainModel);
 
-            regionDomainModel = await regionRepository.UpdateAsync(id, regionDomainModel);
+                if (regionDomainModel == null)
+                {
+                    return NotFound();
+                }
 
-            if (regionDomainModel == null)
-            {
-                return NotFound();
-            }
+                //Convert Domain Model to DTO
+                var regionDto = mapper.Map<RegionDTO>(regionDomainModel);
 
-            //Map DTO to Domain Model
-            regionDomainModel.Code = updateRegionRequestDTO.Code;
-            regionDomainModel.Name = updateRegionRequestDTO.Name;
-            regionDomainModel.RegionImageUrl = updateRegionRequestDTO.RegionImageUrl;
-
-            Console.WriteLine("Code: {0}", regionDomainModel.Code);
-
-            await dbContext.SaveChangesAsync();
-
-            //Convert Domain Model to DTO
-            var regionDto = mapper.Map<RegionDTO>(regionDomainModel);
-
-            return Ok(regionDto);
+                return Ok(regionDto);
         }
 
         //Delete Region
