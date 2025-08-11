@@ -85,40 +85,28 @@ namespace Kometha.API.Controllers
                 return NotFound();
             }
 
-            ////Map DTO to Domain Model
-            //walkDomainModel.Name = updateWalkRequestDTO.Name;
-            //walkDomainModel.Description = updateWalkRequestDTO.Description;            
-            //walkDomainModel.LengthInKm = updateWalkRequestDTO.LengthInKm;
-            //walkDomainModel.WalkImageUrl = updateWalkRequestDTO.WalkImageUrl;
-            //walkDomainModel.DifficultyId = updateWalkRequestDTO.DifficultyId;
-            //walkDomainModel.RegionId = updateWalkRequestDTO.RegionId;
-
-            //Console.WriteLine("Name: {0}", walkDomainModel.Name);
-
-            //await dbContext.SaveChangesAsync();
-
             //Convert Domain Model to DTO
             var walkDto = mapper.Map<WalkDTO>(walkDomainModel);
 
             return Ok(walkDto);
         }
 
-        //Delete Region
+        //Delete Walk by ID
         //DELETE: https:localhost:portnumber/api/walks/{id}
         [HttpDelete]
         [Route("{id:Guid}")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
-            var walkDomainModel = await walkRepository.DeleteAsync(id);
+            var deletedWalkDomainModel = await walkRepository.DeleteAsync(id);
 
-            if (walkDomainModel == null)
+            if (deletedWalkDomainModel == null)
             {
                 return NotFound();
             }
 
             //return delete Walk back
             //map Domain Model to DTO
-            var WalkDTO = mapper.Map<WalkDTO>(walkDomainModel);
+            var WalkDTO = mapper.Map<WalkDTO>(deletedWalkDomainModel);
 
             return Ok(WalkDTO);
         }
