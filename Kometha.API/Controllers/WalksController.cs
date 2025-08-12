@@ -25,6 +25,21 @@ namespace Kometha.API.Controllers
             this.walkRepository = walkRepository;            
         }
 
+        //GET ALL WALKS
+        //GET: https:localhost:portnumber/api/walks?filterOn=Name&filterQuery=Track
+        [HttpGet]
+        public async Task<IActionResult> GetAllWalks([FromQuery] string? filterOn, [FromQuery] string? filterQuery)
+        {
+            // Get Data from database - Domain models
+            var walkDomainModel = await walkRepository.GetAllAsync(filterOn, filterQuery);
+
+            // Map Domain Models to DTOs
+            var regionsDTO = mapper.Map<List<WalkDTO>>(walkDomainModel);
+
+            //Return DTOs
+            return Ok(regionsDTO);
+        }
+
         [HttpPost]
         [ValidateModel]
         public async Task<IActionResult> Create([FromBody] AddWalkRequestDTO addWalkRequestDTO)
@@ -35,21 +50,6 @@ namespace Kometha.API.Controllers
 
                 // Map Domain model to DTO
                 return Ok(mapper.Map<WalkDTO>(walkDomainModel));
-        }
-
-        //GET ALL WALKS
-        //GET: https:localhost:portnumber/api/walks
-        [HttpGet]
-        public async Task<IActionResult> GetAllWalks()
-        {
-            // Get Data from database - Domain models
-            var walkDomainModel = await walkRepository.GetAllAsync();
-
-            // Map Domain Models to DTOs
-            var regionsDTO = mapper.Map<List<WalkDTO>>(walkDomainModel);
-
-            //Return DTOs
-            return Ok(regionsDTO);
         }
 
         //GET SINGLE BY ID

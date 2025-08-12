@@ -12,7 +12,6 @@ namespace Kometha.API.Repositories
         {
             this.dBContext = dBContext;
         }
-
         public async Task<Walk> CreateAsync(Walk walk)
         {
             await dBContext.Walks.AddAsync(walk);
@@ -21,16 +20,28 @@ namespace Kometha.API.Repositories
 
             return walk;
         }
-        public async Task<List<Walk>> GetAllAsync()
+
+        public async Task<List<Walk>> GetAllAsync(string? filterOn = null, string? filterQuery = null)
         {
-            return await dBContext.Walks.Include("Difficulty").Include("Region").ToListAsync();
+            var walks = dBContext.Walks.Include("Difficulty").Include("Region").AsQueryable();
+
+            //Filtering
+            if (string.IsNullOrWhiteSpace(filterOn) == false && string.IsNullOrWhiteSpace(filterQuery) == false)
+            {
+                if (filterOn.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                {
+                    walks = walks.Where(x => x.Name.Contains(filterQuery));
+                }
+                
+            }
+
+            return await walks.ToListAsync();            
         }
 
         public async Task<Walk?> GetByIdAsync(Guid id)
         {
             return await dBContext.Walks.Include("Difficulty").Include("Region").FirstOrDefaultAsync(x => x.Id == id);
         }
-
         public async Task<Walk?> UpdateAsync(Guid id, Walk walk)
         {
             var existingWalk = await dBContext.Walks.FindAsync(id);
@@ -51,7 +62,6 @@ namespace Kometha.API.Repositories
             return existingWalk;
 
         }
-
         public async Task<Walk?> DeleteAsync(Guid id)
         {
             var existingWalk = await dBContext.Walks.FindAsync(id);
