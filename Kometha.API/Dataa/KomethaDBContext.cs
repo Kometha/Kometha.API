@@ -5,7 +5,7 @@ namespace Kometha.API.Dataa
 {
     public class KomethaDBContext : DbContext
     {
-        public KomethaDBContext(DbContextOptions dbContextOptions) : base(dbContextOptions)
+        public KomethaDBContext(DbContextOptions<KomethaDBContext> dbContextOptions) : base(dbContextOptions)
         {
         }
 

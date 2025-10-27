@@ -15,7 +15,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Connection String
 builder.Services.AddDbContext<KomethaDBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("KomethaConnectionString")));
+
+//Auth String
+builder.Services.AddDbContext<KomethaAuthDBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("KomethaAuthConnectionString")));
 
 builder.Services.AddScoped<IRegionRepository, SQLRegionRepository>();
 builder.Services.AddScoped<IWalkRepository, SQLWalkRepository>();

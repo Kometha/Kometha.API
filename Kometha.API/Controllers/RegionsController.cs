@@ -4,6 +4,7 @@ using Kometha.API.Dataa;
 using Kometha.API.Models.Domain;
 using Kometha.API.Models.DTOs;
 using Kometha.API.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Kometha.API.Controllers
@@ -11,6 +12,7 @@ namespace Kometha.API.Controllers
     //https:localhost:portnumber/api/regions
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class RegionsController : ControllerBase
     {
         private readonly KomethaDBContext dbContext;
