@@ -21,7 +21,7 @@ namespace Kometha.API.Repositories
             return walk;
         }
 
-        public async Task<IEnumerable<Walk>> GetAllAsync(string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool? isAscending = true)
+        public async Task<IEnumerable<Walk>> GetAllAsync(int pageNumber, int pageSize, string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool? isAscending = true)
         {
             var walks = dBContext.Walks.Include("Difficulty").Include("Region").AsQueryable();
 
@@ -31,8 +31,7 @@ namespace Kometha.API.Repositories
                 if (filterOn.Equals("Name", StringComparison.OrdinalIgnoreCase))
                 {
                     walks = walks.Where(x => x.Name.Contains(filterQuery));
-                }
-                
+                }                
             }
 
             // Sorting
@@ -52,7 +51,10 @@ namespace Kometha.API.Repositories
                 }
             }
 
-            return await walks.ToListAsync();            
+            //Pagination 
+            var skipResults = (pageNumber - 1) * pageSize;            
+
+            return await walks.Skip(skipResults).Take(pageSize).ToListAsync();            
         }
 
         public async Task<Walk?> GetByIdAsync(Guid id)

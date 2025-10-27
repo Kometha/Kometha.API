@@ -26,12 +26,12 @@ namespace Kometha.API.Controllers
         }
 
         //GET ALL WALKS
-        //GET: https:localhost:portnumber/api/walks?filterOn=Name&filterQuery=Track&sortBy=Name&isAscending=true
+        //GET: https:localhost:portnumber/api/walks?filterOn=Name&filterQuery=Track&sortBy=Name&isAscending=true&pageNumber=1&pageSize=10
         [HttpGet]
-        public async Task<IActionResult> GetAllWalks([FromQuery] string? filterOn, [FromQuery] string? filterQuery, [FromQuery] string? sortBy, [FromQuery] bool? isAscending)
+        public async Task<IActionResult> GetAllWalks([FromQuery] string? filterOn, [FromQuery] string? filterQuery, [FromQuery] string? sortBy, [FromQuery] bool? isAscending, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 1000)
         {
             // Get Data from database - Domain models
-            var walkDomainModel = await walkRepository.GetAllAsync(filterOn, filterQuery, sortBy, isAscending);
+            var walkDomainModel = await walkRepository.GetAllAsync(pageNumber, pageSize, filterOn, filterQuery, sortBy, isAscending);
 
             // Map Domain Models to DTOs
             var walksDTO = mapper.Map<List<WalkDTO>>(walkDomainModel);
