@@ -23,6 +23,7 @@ builder.Services.AddDbContext<KomethaAuthDBContext>(options => options.UseSqlSer
 
 builder.Services.AddScoped<IRegionRepository, SQLRegionRepository>();
 builder.Services.AddScoped<IWalkRepository, SQLWalkRepository>();
+builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 
 builder.Services.AddAutoMapper(cfg => { }, typeof(AutoMapperProfiles));
 
