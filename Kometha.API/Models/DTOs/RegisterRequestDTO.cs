@@ -2,7 +2,7 @@
 
 namespace Kometha.API.Models.DTOs
 {
-    public class RegisterRequestDto
+    public class RegisterRequestDTO
     {
         [Required]
         [DataType(DataType.EmailAddress)]
