@@ -1,28 +1,46 @@
-﻿using AutoMapper;
-using Kometha.API.CustomActionFilters;
-using Kometha.API.Dataa;
-using Kometha.API.Models.Domain;
-using Kometha.API.Models.DTOs;
-using Kometha.API.Repositories;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-
-namespace Kometha.API.Controllers
+﻿namespace Kometha.API.Controllers
 {
+    using AutoMapper;
+    using Kometha.API.CustomActionFilters;
+    using Kometha.API.Dataa;
+    using Kometha.API.Models.Domain;
+    using Kometha.API.Models.DTOs;
+    using Kometha.API.Repositories;
+    using Microsoft.AspNetCore.Mvc;
+
+    /// <summary>
+    /// Defines the <see cref="WalksController" />
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class WalksController : ControllerBase
     {
+        /// <summary>
+        /// Defines the dbContext
+        /// </summary>
         private readonly KomethaDBContext dbContext;
+
+        /// <summary>
+        /// Defines the mapper
+        /// </summary>
         private readonly IMapper mapper;
+
+        /// <summary>
+        /// Defines the walkRepository
+        /// </summary>
         private readonly IWalkRepository walkRepository;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WalksController"/> class.
+        /// </summary>
+        /// <param name="dbContext">The dbContext<see cref="KomethaDBContext"/></param>
+        /// <param name="mapper">The mapper<see cref="IMapper"/></param>
+        /// <param name="walkRepository">The walkRepository<see cref="IWalkRepository"/></param>
         public WalksController(KomethaDBContext dbContext, IMapper mapper, IWalkRepository walkRepository)
         {
             this.dbContext = dbContext;
             this.mapper = mapper;
-            this.walkRepository = walkRepository;            
+            this.walkRepository = walkRepository;
         }
 
         //GET ALL WALKS
@@ -40,25 +58,36 @@ namespace Kometha.API.Controllers
             return Ok(walksDTO);
         }
 
+        /// <summary>
+        /// The Create
+        /// </summary>
+        /// <param name="addWalkRequestDTO">The addWalkRequestDTO<see cref="AddWalkRequestDTO"/></param>
+        /// <returns>The <see cref="Task{IActionResult}"/></returns>
         [HttpPost]
         [ValidateModel]
         public async Task<IActionResult> Create([FromBody] AddWalkRequestDTO addWalkRequestDTO)
         {
-                var walkDomainModel = mapper.Map<Walk>(addWalkRequestDTO);
+            var walkDomainModel = mapper.Map<Walk>(addWalkRequestDTO);
 
-                await walkRepository.CreateAsync(walkDomainModel);
+            await walkRepository.CreateAsync(walkDomainModel);
 
-                // Map Domain model to DTO
-                return Ok(mapper.Map<WalkDTO>(walkDomainModel));
+            // Map Domain model to DTO
+            return Ok(mapper.Map<WalkDTO>(walkDomainModel));
         }
 
         //GET SINGLE BY ID
         //GET: https:localhost:portnumber/api/walks/{id}
+
+        /// <summary>
+        /// The GetWalkById
+        /// </summary>
+        /// <param name="id">The id<see cref="Guid"/></param>
+        /// <returns>The <see cref="Task{IActionResult}"/></returns>
         [HttpGet]
         [Route("{id:Guid}")]
         public async Task<IActionResult> GetWalkById([FromRoute] Guid id)
         {
-            var walkDomainModel = await walkRepository.GetByIdAsync(id);            
+            var walkDomainModel = await walkRepository.GetByIdAsync(id);
 
             if (walkDomainModel == null)
             {
@@ -70,31 +99,45 @@ namespace Kometha.API.Controllers
 
             return Ok(walkDto);
         }
+
         //Update Walk
         //PUT: https:localhost:portnumber/api/walks/{id}
+
+        /// <summary>
+        /// The Update
+        /// </summary>
+        /// <param name="id">The id<see cref="Guid"/></param>
+        /// <param name="updateWalkRequestDTO">The updateWalkRequestDTO<see cref="UpdateWalkRequestDTO"/></param>
+        /// <returns>The <see cref="Task{IActionResult}"/></returns>
         [HttpPut]
         [ValidateModel]
         [Route("{id:Guid}")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateWalkRequestDTO updateWalkRequestDTO)
         {
-                //Map DTO to Domain Model
-                var walkDomainModel = mapper.Map<Walk>(updateWalkRequestDTO);
+            //Map DTO to Domain Model
+            var walkDomainModel = mapper.Map<Walk>(updateWalkRequestDTO);
 
-                walkDomainModel = await walkRepository.UpdateAsync(id, walkDomainModel);
+            walkDomainModel = await walkRepository.UpdateAsync(id, walkDomainModel);
 
-                if (walkDomainModel == null)
-                {
-                    return NotFound();
-                }
+            if (walkDomainModel == null)
+            {
+                return NotFound();
+            }
 
-                //Convert Domain Model to DTO
-                var walkDto = mapper.Map<WalkDTO>(walkDomainModel);
+            //Convert Domain Model to DTO
+            var walkDto = mapper.Map<WalkDTO>(walkDomainModel);
 
-                return Ok(walkDto);                
+            return Ok(walkDto);
         }
 
         //Delete Walk by ID
         //DELETE: https:localhost:portnumber/api/walks/{id}
+
+        /// <summary>
+        /// The Delete
+        /// </summary>
+        /// <param name="id">The id<see cref="Guid"/></param>
+        /// <returns>The <see cref="Task{IActionResult}"/></returns>
         [HttpDelete]
         [Route("{id:Guid}")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)

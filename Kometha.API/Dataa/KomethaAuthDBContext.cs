@@ -1,15 +1,26 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
-
-namespace Kometha.API.Dataa
+﻿namespace Kometha.API.Dataa
 {
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore;
+
+    /// <summary>
+    /// Defines the <see cref="KomethaAuthDBContext" />
+    /// </summary>
     public class KomethaAuthDBContext : IdentityDbContext
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KomethaAuthDBContext"/> class.
+        /// </summary>
+        /// <param name="options">The options<see cref="DbContextOptions{KomethaAuthDBContext}"/></param>
         public KomethaAuthDBContext(DbContextOptions<KomethaAuthDBContext> options) : base(options)
         {
         }
 
+        /// <summary>
+        /// The OnModelCreating
+        /// </summary>
+        /// <param name="builder">The builder<see cref="ModelBuilder"/></param>
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -25,7 +36,7 @@ namespace Kometha.API.Dataa
                     Id = readerRoleId,
                     ConcurrencyStamp = readerRoleId,
                     Name = "Reader",
-                    NormalizedName = "Reader".ToUpper()                    
+                    NormalizedName = "Reader".ToUpper()
                 },
                 new IdentityRole
                 {
