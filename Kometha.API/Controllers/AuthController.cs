@@ -59,7 +59,18 @@
         [Route("Login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDTO loginRequestDto)
         {
-            return Ok("Login endpoint");
+            var user = await UserManager.FindByEmailAsync(loginRequestDto.Username);
+
+            if (user != null && await UserManager.CheckPasswordAsync(user, loginRequestDto.Password))
+            {
+                //Create TOKEN 
+
+                return Ok("Usuario autenticado correctamente");
+            }
+            else
+            {
+                return Unauthorized("Credenciales inválidas");
+            }
         }
     }
 }
