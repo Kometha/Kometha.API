@@ -4,42 +4,25 @@
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
 
-    /// <summary>
-    /// Defines the <see cref="AuthController" />
-    /// </summary>
+
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
-        /// <summary>
-        /// Defines the userManager
-        /// </summary>
+
         private readonly UserManager<IdentityUser> userManager;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AuthController"/> class.
-        /// </summary>
-        /// <param name="userManager">The userManager<see cref="UserManager{IdentityUser}"/></param>
         public AuthController(UserManager<IdentityUser> userManager)
         {
             UserManager = userManager;
         }
 
-        /// <summary>
-        /// Gets the UserManager
-        /// </summary>
         public UserManager<IdentityUser> UserManager { get; }
 
-        // POST: api/Auth/Register
-
-        /// <summary>
-        /// The Register
-        /// </summary>
-        /// <param name="registerRequestDto">The registerRequestDto<see cref="RegisterRequestDto"/></param>
-        /// <returns>The <see cref="Task{IActionResult}"/></returns>
+        // POST: api/Auth/Register        
         [HttpPost]
         [Route("Register")]
-        public async Task<IActionResult> Register([FromBody] RegisterRequestDto registerRequestDto)
+        public async Task<IActionResult> Register([FromBody] RegisterRequestDTO registerRequestDto)
         {
             var identityUser = new IdentityUser
             {
@@ -69,6 +52,14 @@
             {
                 return BadRequest(identityResult.Errors);
             }
+        }
+
+        // POST: api/Auth/Login
+        [HttpPost]
+        [Route("Login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequestDTO loginRequestDto)
+        {
+            return Ok("Login endpoint");
         }
     }
 }
