@@ -8,6 +8,7 @@
     using Kometha.API.Repositories;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using System.Text.Json;
 
     //https:localhost:portnumber/api/regions
 
@@ -22,12 +23,14 @@
         private readonly IRegionRepository regionRepository;
 
         private readonly IMapper mapper;
+        private readonly ILogger<RegionsController> logger;
 
-        public RegionsController(KomethaDBContext dbContext, IRegionRepository regionRepository, IMapper mapper)
+        public RegionsController(KomethaDBContext dbContext, IRegionRepository regionRepository, IMapper mapper, ILogger<RegionsController> logger)
         {
             this.dbContext = dbContext;
             this.regionRepository = regionRepository;
             this.mapper = mapper;
+            this.logger = logger;
         }
 
         //GET ALL REGIONS
@@ -36,14 +39,27 @@
         [Authorize(Roles = "Reader")]
         public async Task<IActionResult> GetAllRegions()
         {
-            // Get Data from database - Domain models
-            var regionDomainModel = await regionRepository.GetAllAsync();
+            try
+            {
+                //throw new Exception("This is a test exception for GetAllRegions");
 
-            // Map Domain Models to DTOs
-            var regionsDTO = mapper.Map<List<RegionDTO>>(regionDomainModel);
+                // Get Data from database - Domain models
+                var regionDomainModel = await regionRepository.GetAllAsync();
 
-            //Return DTOs
-            return Ok(regionsDTO);
+                // Map Domain Models to DTOs
+                var regionsDTO = mapper.Map<List<RegionDTO>>(regionDomainModel);
+
+                //Return DTOs
+                logger.LogInformation($"Finished GetAllRegions request with data: {JsonSerializer.Serialize(regionsDTO)}");
+
+                return Ok(mapper.Map<List<RegionDTO>>(regionDomainModel));
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, ex.Message);
+                throw;
+            }
+
         }
 
         //GET SINGLE BY ID
