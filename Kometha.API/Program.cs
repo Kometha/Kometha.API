@@ -15,9 +15,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 var logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
+    .MinimumLevel.Information()
     .Enrich.FromLogContext()
     .WriteTo.Console()
     .CreateLogger();
+
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
 
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
