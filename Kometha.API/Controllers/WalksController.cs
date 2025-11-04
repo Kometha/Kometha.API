@@ -6,37 +6,19 @@
     using Kometha.API.Models.Domain;
     using Kometha.API.Models.DTOs;
     using Kometha.API.Repositories;
-    using Microsoft.AspNetCore.Mvc;
-    using System.Net;
-
-    /// <summary>
-    /// Defines the <see cref="WalksController" />
-    /// </summary>
+    using Microsoft.AspNetCore.Mvc;    
     [Route("api/[controller]")]
     [ApiController]
     public class WalksController : ControllerBase
     {
-        /// <summary>
-        /// Defines the dbContext
-        /// </summary>
         private readonly KomethaDBContext dbContext;
 
-        /// <summary>
-        /// Defines the mapper
-        /// </summary>
+
         private readonly IMapper mapper;
 
-        /// <summary>
-        /// Defines the walkRepository
-        /// </summary>
+
         private readonly IWalkRepository walkRepository;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="WalksController"/> class.
-        /// </summary>
-        /// <param name="dbContext">The dbContext<see cref="KomethaDBContext"/></param>
-        /// <param name="mapper">The mapper<see cref="IMapper"/></param>
-        /// <param name="walkRepository">The walkRepository<see cref="IWalkRepository"/></param>
         public WalksController(KomethaDBContext dbContext, IMapper mapper, IWalkRepository walkRepository)
         {
             this.dbContext = dbContext;
@@ -59,11 +41,6 @@
                 return Ok(walksDTO);            
         }
 
-        /// <summary>
-        /// The Create
-        /// </summary>
-        /// <param name="addWalkRequestDTO">The addWalkRequestDTO<see cref="AddWalkRequestDTO"/></param>
-        /// <returns>The <see cref="Task{IActionResult}"/></returns>
         [HttpPost]
         [ValidateModel]
         public async Task<IActionResult> Create([FromBody] AddWalkRequestDTO addWalkRequestDTO)
@@ -78,12 +55,6 @@
 
         //GET SINGLE BY ID
         //GET: https:localhost:portnumber/api/walks/{id}
-
-        /// <summary>
-        /// The GetWalkById
-        /// </summary>
-        /// <param name="id">The id<see cref="Guid"/></param>
-        /// <returns>The <see cref="Task{IActionResult}"/></returns>
         [HttpGet]
         [Route("{id:Guid}")]
         public async Task<IActionResult> GetWalkById([FromRoute] Guid id)
@@ -103,13 +74,6 @@
 
         //Update Walk
         //PUT: https:localhost:portnumber/api/walks/{id}
-
-        /// <summary>
-        /// The Update
-        /// </summary>
-        /// <param name="id">The id<see cref="Guid"/></param>
-        /// <param name="updateWalkRequestDTO">The updateWalkRequestDTO<see cref="UpdateWalkRequestDTO"/></param>
-        /// <returns>The <see cref="Task{IActionResult}"/></returns>
         [HttpPut]
         [ValidateModel]
         [Route("{id:Guid}")]
@@ -133,12 +97,6 @@
 
         //Delete Walk by ID
         //DELETE: https:localhost:portnumber/api/walks/{id}
-
-        /// <summary>
-        /// The Delete
-        /// </summary>
-        /// <param name="id">The id<see cref="Guid"/></param>
-        /// <returns>The <see cref="Task{IActionResult}"/></returns>
         [HttpDelete]
         [Route("{id:Guid}")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
