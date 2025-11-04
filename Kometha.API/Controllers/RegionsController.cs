@@ -59,7 +59,6 @@
                 logger.LogError(ex, ex.Message);
                 throw;
             }
-
         }
 
         //GET SINGLE BY ID

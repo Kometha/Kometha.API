@@ -7,6 +7,7 @@
     using Kometha.API.Models.DTOs;
     using Kometha.API.Repositories;
     using Microsoft.AspNetCore.Mvc;
+    using System.Net;
 
     /// <summary>
     /// Defines the <see cref="WalksController" />
@@ -48,14 +49,14 @@
         [HttpGet]
         public async Task<IActionResult> GetAllWalks([FromQuery] string? filterOn, [FromQuery] string? filterQuery, [FromQuery] string? sortBy, [FromQuery] bool? isAscending, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 1000)
         {
-            // Get Data from database - Domain models
-            var walkDomainModel = await walkRepository.GetAllAsync(pageNumber, pageSize, filterOn, filterQuery, sortBy, isAscending);
+                // Get Data from database - Domain models
+                var walkDomainModel = await walkRepository.GetAllAsync(pageNumber, pageSize, filterOn, filterQuery, sortBy, isAscending);
 
-            // Map Domain Models to DTOs
-            var walksDTO = mapper.Map<List<WalkDTO>>(walkDomainModel);
-
-            //Return DTOs
-            return Ok(walksDTO);
+                // Map Domain Models to DTOs
+                var walksDTO = mapper.Map<List<WalkDTO>>(walkDomainModel);                
+            
+                //Return DTOs
+                return Ok(walksDTO);            
         }
 
         /// <summary>
