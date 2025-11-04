@@ -14,7 +14,7 @@
 
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class RegionsController : ControllerBase
     {
 
@@ -36,7 +36,7 @@
         //GET ALL REGIONS
         //GET: https:localhost:portnumber/api/regions
         [HttpGet]
-        [Authorize(Roles = "Reader")]
+        //[Authorize(Roles = "Reader")]
         public async Task<IActionResult> GetAllRegions()
         {
             try
@@ -66,7 +66,7 @@
 
         [HttpGet]
         [Route("{id:Guid}")]
-        [Authorize(Roles = "Reader")]        
+        //[Authorize(Roles = "Reader")]        
         public async Task<IActionResult> GetRegionById([FromRoute] Guid id)
         {
 
@@ -89,7 +89,7 @@
         //POST: https://localhost:portnumber/api/regions
         [HttpPost]
         [ValidateModel]
-        [Authorize(Roles = "Writer")]
+        //[Authorize(Roles = "Writer")]
         public async Task<IActionResult> Create([FromBody] AddRegionRequestDTO addRegionRequestDto)
         {
             //Map or Convert DTO to Domain Model
@@ -108,7 +108,7 @@
         //PUT: https:localhost:portnumber/api/regions/{id}
 
         [HttpPut]
-        [Authorize(Roles = "Writer")]        
+        //[Authorize(Roles = "Writer")]        
         [ValidateModel]
         [Route("{id:Guid}")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDTO updateRegionRequestDTO)
@@ -133,7 +133,7 @@
         //DELETE: https:localhost:portnumber/api/regions/{id}
 
         [HttpDelete]
-        [Authorize(Roles = "Writer, Reader")]        
+        //[Authorize(Roles = "Writer, Reader")]        
         [Route("{id:Guid}")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
