@@ -1,5 +1,6 @@
 using Kometha.API.Dataa;
 using Kometha.API.Mappings;
+using Kometha.API.Middlewares;
 using Kometha.API.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -18,6 +19,7 @@ var logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .Enrich.FromLogContext()
     .WriteTo.Console()
+    .WriteTo.File("Logs/Kometha_logs.txt", rollingInterval: RollingInterval.Minute)
     .CreateLogger();
 
 builder.Logging.ClearProviders();
@@ -107,6 +109,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 app.UseHttpsRedirection();
 
